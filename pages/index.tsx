@@ -7,12 +7,20 @@ import { utils } from "ethers";
 const Home: NextPage = () => {
   const allowList = [
     {
-      "address": "<ALLOWLIST_ADDRESS>",
-      "maxClaimable": "<CLAIMABLE_AMOUNT>"
+      "address": "0x227E7CF068E7d932C5123155E42091D5aaDF7A0f",
+      "maxClaimable": "2500"
     },
     {
-      "address": "<ALLOWLIST_ADDRESS>",
-      "maxClaimable": "<CLAIMABLE_AMOUNT>"
+      "address": "0xe7eB54615C1CA35fa6879947778d713D1Ca9CD76",
+      "maxClaimable": "2500"
+    },
+    {
+      "address": "0x648F06673985554696d7E52E257cb17e2E189936",
+      "maxClaimable": "2500"
+    },
+    {
+      "address": "0xA37AB07CaE56C064eEB36b59a39817c6fDa93762",
+      "maxClaimable": "2500"
     }
   ];
 
@@ -27,7 +35,7 @@ const Home: NextPage = () => {
     const merkleTree = await createMerkleTreeFromAllowList(allowList);
     const leaf = {
       "address": address,
-      "maxClaimable": "<CLAIMABLE_AMOUNT>"
+      "maxClaimable": "2500"
     };
     const proof = await getProofsForAllowListEntry(merkleTree, leaf);
     const proofHash = "0x" + proof[0].data.toString("hex");
@@ -35,7 +43,7 @@ const Home: NextPage = () => {
   };
 
   const address = useAddress();
-  const { contract: tokenContract } = useContract("<CONTRACT_ADDRESS>");
+  const { contract: tokenContract } = useContract("0xCc273dBf63548a9C4d31Db1cf1be37FCC02b4EA1");
   const { data: tokenBalance } = useTokenBalance(tokenContract, address);
 
   return (
@@ -80,14 +88,14 @@ const Home: NextPage = () => {
                 <h1>ERC-20 Airdrop</h1>
                 <h3>Token balance: {tokenBalance?.displayValue}</h3>
                 <Web3Button
-                  contractAddress="<CONTRACT_ADDRESS>"
+                  contractAddress="0xf7cB477d34164E839e4dcc664a27339188121a0f"
                   action={async (contract) => contract.call(
                     "claim",
                     [
                       address,
-                      utils.parseEther("<CLAIMABLE_AMOUNT>"),
+                      utils.parseEther("1000"),
                       [await getUserProof(address)],
-                      utils.parseEther("<CLAIMABLE_AMOUNT>"),
+                      utils.parseEther("2500"),
                     ]
                   )}
                   onError={() => alert("Not eligible for airdrop or already claimed!")}
