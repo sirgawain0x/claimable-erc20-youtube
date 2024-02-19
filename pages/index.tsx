@@ -1,109 +1,17 @@
-import { ConnectWallet, Web3Button, createMerkleTreeFromAllowList, getProofsForAllowListEntry, useAddress, useContract, useTokenBalance } from "@thirdweb-dev/react";
 import styles from "../styles/Home.module.css";
 import { NextPage } from "next";
-import { useState } from "react";
-import { utils } from "ethers";
 
 const Home: NextPage = () => {
-  const allowList = [
-    {
-      "address": "0x227E7CF068E7d932C5123155E42091D5aaDF7A0f",
-      "maxClaimable": "2500"
-    },
-    {
-      "address": "0xe7eB54615C1CA35fa6879947778d713D1Ca9CD76",
-      "maxClaimable": "2500"
-    },
-    {
-      "address": "0x648F06673985554696d7E52E257cb17e2E189936",
-      "maxClaimable": "2500"
-    },
-    {
-      "address": "0xA37AB07CaE56C064eEB36b59a39817c6fDa93762",
-      "maxClaimable": "2500"
-    }
-  ];
-
-  const [merkleRoot, setMerkleRoot] = useState<string | null>(null);
-
-  const generateMerkleTree = async () => {
-    const merkleTree = await createMerkleTreeFromAllowList(allowList);
-    setMerkleRoot(merkleTree.getHexRoot());
-  };
-
-  const getUserProof = async (address: string) => {
-    const merkleTree = await createMerkleTreeFromAllowList(allowList);
-    const leaf = {
-      "address": address,
-      "maxClaimable": "2500"
-    };
-    const proof = await getProofsForAllowListEntry(merkleTree, leaf);
-    const proofHash = "0x" + proof[0].data.toString("hex");
-    return proofHash;
-  };
-
-  const address = useAddress();
-  const { contract: tokenContract } = useContract("0xCc273dBf63548a9C4d31Db1cf1be37FCC02b4EA1");
-  const { data: tokenBalance } = useTokenBalance(tokenContract, address);
-
+  
   return (
     <main className={styles.main}>
       <div className={styles.container}>
-        <ConnectWallet />
-        {address && (
-          <div>
-            <div style={{
-                backgroundColor: "#222",
-                padding: "2rem",
-                borderRadius: "1rem",
-                textAlign: "center",
-                minWidth: "500px",
-                marginBottom: "2rem",
-                marginTop: "2rem",
-              }}>
-                <h1>Create Merkle Tree</h1>
-                <button
-                  onClick={generateMerkleTree}
-                  style={{
-                    padding: "1rem",
-                    borderRadius: "8px",
-                    backgroundColor: "#FFF",
-                    color: "#333",
-                    border: "none",
-                    cursor: "pointer",
-                    fontSize: "1rem",
-                  }}
-                >Generate</button>
-                {merkleRoot && (
-                  <p>Merkle Root Hash: {merkleRoot}</p>
-                )}
-              </div>
-              <div style={{
-                backgroundColor: "#222",
-                padding: "2rem",
-                borderRadius: "1rem",
-                textAlign: "center",
-                minWidth: "500px",
-              }}>
-                <h1>ERC-20 Airdrop</h1>
-                <h3>Token balance: {tokenBalance?.displayValue}</h3>
-                <Web3Button
-                  contractAddress="0xf7cB477d34164E839e4dcc664a27339188121a0f"
-                  action={async (contract) => contract.call(
-                    "claim",
-                    [
-                      address,
-                      utils.parseEther("1000"),
-                      [await getUserProof(address)],
-                      utils.parseEther("2500"),
-                    ]
-                  )}
-                  onError={() => alert("Not eligible for airdrop or already claimed!")}
-                  onSuccess={() => alert("Airdrop claimed!")}
-                >Claim Airdrop</Web3Button>
-              </div>
-          </div>
-        )}
+        <iframe
+            src="https://embed.ipfscdn.io/ipfs/bafybeigdie2yyiazou7grjowoevmuip6akk33nqb55vrpezqdwfssrxyfy/erc20.html?contract=0x56C600F9D24B318cF2931c28747ECD2E92160716&chain=%7B%22name%22%3A%22Arbitrum+One%22%2C%22chain%22%3A%22ETH%22%2C%22rpc%22%3A%5B%22https%3A%2F%2Farbitrum.rpc.thirdweb.com%2F%24%7BTHIRDWEB_API_KEY%7D%22%5D%2C%22nativeCurrency%22%3A%7B%22name%22%3A%22Ether%22%2C%22symbol%22%3A%22ETH%22%2C%22decimals%22%3A18%7D%2C%22shortName%22%3A%22arb1%22%2C%22chainId%22%3A42161%2C%22testnet%22%3Afalse%2C%22slug%22%3A%22arbitrum%22%2C%22icon%22%3A%7B%22url%22%3A%22ipfs%3A%2F%2FQmcxZHpyJa8T4i63xqjPYrZ6tKrt55tZJpbXcjSDKuKaf9%2Farbitrum%2F512.png%22%2C%22width%22%3A512%2C%22height%22%3A512%2C%22format%22%3A%22png%22%7D%7D&clientId=69d315441aed77946e5daa490ca4df63&theme=system&primaryColor=green"
+            width="600px"
+            height="600px"
+            style={{ maxWidth: "100%" }}
+        ></iframe>
       </div>
     </main>
   );
